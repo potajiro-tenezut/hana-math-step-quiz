@@ -162,7 +162,7 @@ function remainderGenerator(kind: string): Gen {
       const rem = r.int(2, 9);
       const target = n - rem;
       const answer = divisors(target).filter((d) => d > rem).join(", ");
-      return oneStepQuestion(r, seed, type, "unit-10", "divisors", `${n}を割ると${rem}余る整数をすべて求める`, `${n}=割る数\\times 商+${rem}`, `${n}-${rem}=${target}を作り、${target}の約数のうち${rem}より大きいものを選ぶ`, answer, `余りを引いた ${target} が割る数の倍数です。`, [`${n}の約数をすべて選ぶ`, `${rem}以下の約数も含める`], { n, rem, target });
+      return oneStepQuestion(r, seed, type, "unit-10", "divisors", `${n}を割ると${rem}余る整数をすべて求める`, `${n}=d\\times q+${rem}`, `${n}-${rem}=${target}を作り、${target}の約数のうち${rem}より大きいものを選ぶ`, answer, `余りを引いた ${target} が割る数の倍数です。`, [`${n}の約数をすべて選ぶ`, `${rem}以下の約数も含める`], { n, rem, target });
     }
     if (kind === "same-remainder-lcm") {
       const nums = [12, 16, 18];
@@ -177,7 +177,7 @@ function remainderGenerator(kind: string): Gen {
         "unit-10",
         "divisors",
         `${nums.join("、")}のどの数で割っても${rem}余る、最小の3桁の整数`,
-        `n-${rem}\\ は\\ ${nums.join(",")}\\ すべてで割り切れる`,
+        `n-${rem}=${base}\\times \\square`,
         `${nums.join("、")}の最小公倍数${base}を求め、${base}+${rem}, ${base}\\times2+${rem}, ... の順に3桁になる最初の数を探す`,
         `${ans}`,
         `${base}ごとに同じ余りの数が出るので、最小の3桁は ${ans} です。`,
@@ -198,7 +198,7 @@ function remainderGenerator(kind: string): Gen {
       const offset = 31 + r.int(20, 30) - 1;
       const days = ["水", "木", "金", "土", "日", "月", "火"];
       const ans = days[offset % 7];
-      return oneStepQuestion(r, seed, type, "unit-10", "divisors", `3月1日が水曜日の年の4月${offset - 30}日の曜日`, `${offset}\\ 日後`, `3月1日から4月${offset - 30}日までの日数差${offset}を7で割り、余りだけ水曜日から進める`, `${ans}曜日`, `${offset}=7\\times${Math.floor(offset / 7)}+${offset % 7} なので、水曜日から${offset % 7}日進みます。`, [`3月と4月の日数をどちらも30日として数える`, `7で割った商だけ曜日を進める`], { offset, ans });
+      return oneStepQuestion(r, seed, type, "unit-10", "divisors", `3月1日が水曜日の年の4月${offset - 30}日の曜日`, `${offset}=7\\times \\square + \\triangle`, `3月1日から4月${offset - 30}日までの日数差${offset}を7で割り、余りだけ水曜日から進める`, `${ans}曜日`, `${offset}=7\\times${Math.floor(offset / 7)}+${offset % 7} なので、水曜日から${offset % 7}日進みます。`, [`3月と4月の日数をどちらも30日として数える`, `7で割った商だけ曜日を進める`], { offset, ans });
     }
     const rem12 = 9;
     const rem16 = 13;
@@ -212,7 +212,7 @@ function remainderGenerator(kind: string): Gen {
       "unit-10",
       "divisors",
       `12で割ると9余り、16で割ると13余る数のうち、100に最も近い整数`,
-      `12で割ると9余る\\quad 16で割ると13余る`,
+      `n=12\\times \\square+9,\\quad n=16\\times \\triangle+13`,
       `まず9, 21, 33, 45, ... と12ずつ増やして、16で割ると13余る数を見つける`,
       `${ans}`,
       `9から12ずつ増やして調べると条件に合う数が見つかります。同じ形の数は48ごとに出るので、100に最も近いものを選びます。`,
@@ -332,10 +332,10 @@ export const generators: QuestionGenerator[] = [
   register("prime-range", "unit-9", "単元9：約数と倍数①", "divisors", "指定範囲の素数", divisorGenerator("prime-range")),
   register("prime-factorization", "unit-9", "単元9：約数と倍数①", "divisors", "素因数分解", divisorGenerator("factorize")),
   register("gcd-lcm", "unit-9", "単元9：約数と倍数①", "divisors", "最大公約数と最小公倍数", divisorGenerator("gcd-lcm")),
-  register("factored-gcd-lcm", "unit-9", "単元9：約数と倍数①", "divisors", "素因数分解済みのGCD/LCM", divisorGenerator("factored-gcd-lcm")),
-  register("gcd-lcm-condition", "unit-9", "単元9：約数と倍数①", "divisors", "GCD/LCM条件から2数", divisorGenerator("condition")),
+  register("factored-gcd-lcm", "unit-9", "単元9：約数と倍数①", "divisors", "素因数分解済みの最大公約数・最小公倍数", divisorGenerator("factored-gcd-lcm")),
+  register("gcd-lcm-condition", "unit-9", "単元9：約数と倍数①", "divisors", "最大公約数・最小公倍数の条件から2数", divisorGenerator("condition")),
   register("single-remainder-divisor", "unit-10", "単元10：約数と倍数②", "divisors", "余りから割る数", remainderGenerator("single-remainder")),
-  register("same-remainder-lcm", "unit-10", "単元10：約数と倍数②", "divisors", "同じ余りとLCM", remainderGenerator("same-remainder-lcm")),
+  register("same-remainder-lcm", "unit-10", "単元10：約数と倍数②", "divisors", "同じ余りと最小公倍数", remainderGenerator("same-remainder-lcm")),
   register("two-remainders-common-divisor", "unit-10", "単元10：約数と倍数②", "divisors", "2つの余り条件", remainderGenerator("two-remainders")),
   register("weekday-mod-seven", "unit-10", "単元10：約数と倍数②", "divisors", "曜日と7の余り", remainderGenerator("weekday")),
   register("nearest-congruence", "unit-10", "単元10：約数と倍数②", "divisors", "余りの条件に合う近い整数", remainderGenerator("nearest")),

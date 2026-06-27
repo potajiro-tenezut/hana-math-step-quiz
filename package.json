@@ -8,6 +8,8 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "format": "prettier --write .",
+    "self-review": "vitest run src/tests/selfReview.test.ts",
+    "verify": "npm run lint && npm run self-review && npm run test && npm run build",
     "test": "vitest run",
     "test:e2e": "playwright test"
   },

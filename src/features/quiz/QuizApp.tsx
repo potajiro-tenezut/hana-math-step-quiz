@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from "react";
-import { Latex } from "../../components/Latex";
+import { Latex, MathText } from "../../components/Latex";
 import { QuestionFlow, SolutionStep, UnitGroup, unitLabels } from "../../domain/question/types";
 import { generators, generateSession } from "../../data/generators";
 import { useStepTimer } from "../../hooks/useStepTimer";
@@ -233,7 +233,9 @@ export function QuizApp() {
         <div className="progressTrack"><span style={{ width: `${progress}%` }} /></div>
         {remaining === 5 && <p className="srOnly" aria-live="polite">残り5秒です</p>}
         <section className="questionArea">
-          <p className="prompt">{current.promptText}</p>
+          <p className="prompt">
+            <MathText value={current.promptText} />
+          </p>
           <div className="formulaCard formulaChange" key={`${currentStep.id}-${animateKey}`}>
             <Latex value={currentStep.stateLatex} block />
           </div>
@@ -242,7 +244,9 @@ export function QuizApp() {
         {feedback && (
           <section className={`feedback ${feedback.kind}`} aria-live="polite" role="status">
             <strong>{feedback.kind === "correct" ? "✓ 正解" : feedback.kind === "wrong" ? "× もう一度" : "時間切れ"}</strong>
-            <p>{feedback.text}</p>
+            <p>
+              <MathText value={feedback.text} />
+            </p>
             {feedback.kind === "timeout" && <button type="button" onClick={followCorrectRoute}>正しい手順で進む</button>}
           </section>
         )}
@@ -296,7 +300,7 @@ function ChoiceList({
             onClick={() => onChoose(choice.id)}
           >
             <span>{state === "wrongChoice" ? "×" : state === "correctChoice" ? "✓" : "○"}</span>
-            <span>{choice.label}</span>
+            <MathText value={choice.label} />
             {choice.labelLatex && <Latex value={choice.labelLatex} />}
           </button>
         );

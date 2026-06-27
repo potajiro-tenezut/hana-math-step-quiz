@@ -170,7 +170,20 @@ function remainderGenerator(kind: string): Gen {
       const base = nums.reduce(lcm);
       let ans = rem;
       while (ans < 100) ans += base;
-      return oneStepQuestion(r, seed, type, "unit-10", "divisors", `${nums.join("、")}のどの数で割っても${rem}余る、最小の3桁の整数`, `n-${rem}\\ は\\ ${nums.join(",")}\\ の公倍数`, `${nums.join("、")}の最小公倍数${base}を求め、${base}k+${rem}が3桁になる最小のkを選ぶ`, `${ans}`, `${base}k+${rem} の形で、最小の3桁は ${ans} です。`, [`${base}k-${rem}で探す`, `それぞれの数を足した${nums.reduce((a, b) => a + b, 0)}を周期にする`], { rem, ans });
+      return oneStepQuestion(
+        r,
+        seed,
+        type,
+        "unit-10",
+        "divisors",
+        `${nums.join("、")}のどの数で割っても${rem}余る、最小の3桁の整数`,
+        `n-${rem}\\ は\\ ${nums.join(",")}\\ すべてで割り切れる`,
+        `${nums.join("、")}の最小公倍数${base}を求め、${base}+${rem}, ${base}\\times2+${rem}, ... の順に3桁になる最初の数を探す`,
+        `${ans}`,
+        `${base}ごとに同じ余りの数が出るので、最小の3桁は ${ans} です。`,
+        [`${base}-${rem}, ${base}\\times2-${rem}, ... の順に探す`, `12+16+18=${nums.reduce((a, b) => a + b, 0)}ごとに同じ余りが出ると考える`],
+        { rem, ans },
+      );
     }
     if (kind === "two-remainders") {
       const a = r.int(60, 120);
@@ -192,7 +205,20 @@ function remainderGenerator(kind: string): Gen {
     const base = lcm(12, 16);
     const candidates = Array.from({ length: 10 }, (_, i) => rem12 + base * i).filter((n) => n % 16 === rem16);
     const ans = candidates.reduce((best, n) => (Math.abs(n - 100) < Math.abs(best - 100) ? n : best), candidates[0]);
-    return oneStepQuestion(r, seed, type, "unit-10", "divisors", `12で割ると9余り、16で割ると13余る数のうち、100に最も近い整数`, `n\\equiv9\\pmod{12},\\ n\\equiv13\\pmod{16}`, `9から12ずつ増やした数を調べ、16で割ると13余るものを見つけて周期48で100に近づける`, `${ans}`, `条件を満たす数は48ごとに現れ、100に最も近いものは ${ans} です。`, [`9と13を足して22を答えにする`, `12と16の和28を周期にする`], { ans });
+    return oneStepQuestion(
+      r,
+      seed,
+      type,
+      "unit-10",
+      "divisors",
+      `12で割ると9余り、16で割ると13余る数のうち、100に最も近い整数`,
+      `12で割ると9余る\\quad 16で割ると13余る`,
+      `まず9, 21, 33, 45, ... と12ずつ増やして、16で割ると13余る数を見つける`,
+      `${ans}`,
+      `9から12ずつ増やして調べると条件に合う数が見つかります。同じ形の数は48ごとに出るので、100に最も近いものを選びます。`,
+      [`9+13=22として、22を答えにする`, `12+16=28ずつ増やせば同じ余りになると考える`],
+      { ans },
+    );
   };
 }
 
@@ -312,7 +338,7 @@ export const generators: QuestionGenerator[] = [
   register("same-remainder-lcm", "unit-10", "単元10：約数と倍数②", "divisors", "同じ余りとLCM", remainderGenerator("same-remainder-lcm")),
   register("two-remainders-common-divisor", "unit-10", "単元10：約数と倍数②", "divisors", "2つの余り条件", remainderGenerator("two-remainders")),
   register("weekday-mod-seven", "unit-10", "単元10：約数と倍数②", "divisors", "曜日と7の余り", remainderGenerator("weekday")),
-  register("nearest-congruence", "unit-10", "単元10：約数と倍数②", "divisors", "最も近い合同条件", remainderGenerator("nearest")),
+  register("nearest-congruence", "unit-10", "単元10：約数と倍数②", "divisors", "余りの条件に合う近い整数", remainderGenerator("nearest")),
   ...["sqrt-square", "decimal-root", "root-product", "root-mul-div", "like-radicals", "simplify-add", "sum-difference", "distribute-root", "binomial-square", "binomial-expand"].map((k) => register(k, "unit-11", "単元11：根号を含む式の計算①", "radicals", k, radicalGenerator(k))),
   ...["single-root-denominator", "several-fractions", "numerator-root", "conjugate-denominator", "both-binomial-rationalize", "two-rationalized-fractions"].map((k) => register(k, "unit-12", "単元12：根号を含む式の計算②", "radicals", k, rationalizeGenerator(k))),
   ...["negative-substitution", "two-variables", "difference-squares", "sum-square", "half-sum", "reciprocal-expression"].map((k) => register(k, "unit-13", "単元13：式の値", "expressions", k, expressionGenerator(k))),
